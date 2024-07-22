@@ -1,0 +1,93 @@
+set cut_paste_input [stack 0]
+version 14.0 v5
+push $cut_paste_input
+Group {
+ name StepBlur
+ tile_color 0xb39365ff
+ note_font "Bitstream Vera Sans Bold"
+ note_font_color 0x5b4516ff
+ selected true
+ xpos -690
+ ypos 1870
+ addUserKnob {20 User l -}
+ addUserKnob {26 txt l "" +STARTLINE T "<b><font size=\"40\"><font color=\"#BAA655\">STEPBLUR</font></b>"}
+ addUserKnob {26 ""}
+ addUserKnob {41 blur_scale l Defocus T IDistort4.blur_scale}
+ addUserKnob {26 ""}
+ addUserKnob {26 txt2 l "" +STARTLINE T "<div style=\"text-align: left; font-size: 10px; color: #666666; font-style: italic;\">\n  v 1.1 : 2023-02\n</div>"}
+}
+ Input {
+  inputs 0
+  name InputMask
+  xpos 682
+  ypos -123
+  number 1
+ }
+ Shuffle2 {
+  fromInput1 {{0} B}
+  fromInput2 {{0} B}
+  mappings "4 rgba.red 0 0 rgba.red 0 0 rgba.green 0 1 rgba.green 0 1 rgba.blue 0 2 rgba.blue 0 2 white -1 -1 rgba.alpha 0 3"
+  name Shuffle1
+  xpos 682
+  ypos -74
+  disable {{"\[string first \".alpha\" \[channels \[input this 0]]]>-1"}}
+ }
+ Input {
+  inputs 0
+  name InputImg
+  xpos 1088
+  ypos -237
+ }
+ Copy {
+  inputs 2
+  from0 rgba.alpha
+  to0 forward.u
+  name Copy33
+  xpos 1088
+  ypos -85
+ }
+set Nbffeda50 [stack 0]
+ IDistort {
+  channels rgba
+  uv_scale 0
+  blur forward.u
+  blur_scale 5
+  name IDistort4
+  xpos 1088
+  ypos 1
+ }
+ IDistort {
+  channels rgba
+  uv forward
+  uv_scale 0
+  blur forward.u
+  blur_scale {{(parent.IDistort4.blur_scale)/2}}
+  name IDistort1
+  xpos 1088
+  ypos 27
+ }
+ IDistort {
+  channels rgba
+  uv forward
+  uv_scale 0
+  blur forward.u
+  blur_scale {{(parent.IDistort4.blur_scale)/4}}
+  name IDistort2
+  xpos 1088
+  ypos 53
+ }
+ Output {
+  name Output1
+  xpos 1088
+  ypos 265
+ }
+push $Nbffeda50
+ Viewer {
+  frame_range 1001-1287
+  fps 25
+  channels forward
+  name Viewer1
+  xpos 1390
+  ypos -94
+ }
+end_group
